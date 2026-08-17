@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Countdown Ulang Tahun — 25 November</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#170D28;
+    --card:#16234F;
+    --border:rgba(255,255,255,.12);
+    --pink:#FF7CA0;
+    --pink-soft:#F3B6CB;
+    --cream:#F5EEFA;
+    --muted:#9E8CB8;
+    --font-display:'Playfair Display', serif;
+    --font-body:'Poppins', sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+
+  html,body{
+    margin:0;
+    height:100%;
+    background:linear-gradient(160deg, #060B1F 0%, #0B1640 45%, #14265E 100%);
+    background-attachment:fixed;
+    color:var(--cream);
+    font-family:var(--font-body);
+  }
+
+  .stage{
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:2.5rem 1.5rem;
+  }
+
+  .eyebrow{
+    text-transform:uppercase;
+    letter-spacing:.28em;
+    font-size:.68rem;
+    color:var(--muted);
+    margin:0 0 .8rem;
+  }
+
+  h1{
+    font-family:var(--font-display);
+    font-style:italic;
+    font-weight:600;
+    font-size:clamp(2rem, 7vw, 2.8rem);
+    margin:0 0 2.6rem;
+    color:var(--cream);
+  }
+
+  .countdown-row{
+    display:flex;
+    gap:.9rem;
+  }
+
+  .unit{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:1.1rem .7rem;
+    min-width:72px;
+  }
+
+  .unit .num{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(1.8rem, 6vw, 2.4rem);
+    color:var(--pink-soft);
+    line-height:1;
+    font-variant-numeric:tabular-nums;
+  }
+
+  .unit .label{
+    display:block;
+    margin-top:.5rem;
+    font-size:.62rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+
+  .footnote{
+    margin:2rem 0 .3rem;
+    font-size:.82rem;
+    color:var(--cream);
+  }
+
+  .microcopy{
+    margin:0;
+    font-size:.72rem;
+    color:var(--muted);
+    max-width:280px;
+    line-height:1.5;
+  }
+
+  .celebrate{
+    display:none;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .celebrate .cake{
+    font-size:3rem;
+    margin-bottom:1rem;
+  }
+
+  .celebrate h1{margin-bottom:.6rem;}
+
+  .celebrate p{
+    font-size:.85rem;
+    color:var(--muted);
+    margin:0;
+  }
+
+  body.is-birthday .default-view{display:none;}
+  body.is-birthday .celebrate{display:flex;}
+</style>
+</head>
+<body>
+
+  <main class="stage">
+
+    <div class="default-view">
+      <p class="eyebrow">Towards My Birthday</p>
+      <h1>25 November</h1>
+
+      <div class="countdown-row">
+        <div class="unit"><span class="num" id="daysNum">--</span><span class="label">Days</span></div>
+        <div class="unit"><span class="num" id="hoursNum">--</span><span class="label">Hours</span></div>
+        <div class="unit"><span class="num" id="minutesNum">--</span><span class="label">MInutes</span></div>
+        <div class="unit"><span class="num" id="secondsNum">--</span><span class="label">Seconds</span></div>
+      </div>
+
+      <p class="footnote"> counting towards 25 November <span id="targetYear"></span></p>
+      <p class="microcopy">My Birthday Is 25 November :D.</p>
+    </div>
+
+    <div class="celebrate">
+      <span class="cake">🎂</span>
+      <h1>Selamat Ulang Tahun!</h1>
+      <p>Semoga harimu penuh kebahagiaan.</p>
+    </div>
+
+  </main>
+
+<script>
+  function pad(n){ return n.toString().padStart(2,'0'); }
+
+  function getNextBirthday(now){
+    const year = now.getFullYear();
+    const isToday = now.getMonth() === 10 && now.getDate() === 25;
+    let target = new Date(year, 10, 25, 0, 0, 0, 0);
+    if (!isToday && now > target){
+      target = new Date(year + 1, 10, 25, 0, 0, 0, 0);
+    }
+    return { target, isToday };
+  }
+
+  function tick(){
+    const now = new Date();
+    const { target, isToday } = getNextBirthday(now);
+
+    document.body.classList.toggle('is-birthday', isToday);
+    if (isToday) return;
+
+    const diff = target - now;
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+
+    document.getElementById('daysNum').textContent = days;
+    document.getElementById('hoursNum').textContent = pad(hours);
+    document.getElementById('minutesNum').textContent = pad(minutes);
+    document.getElementById('secondsNum').textContent = pad(seconds);
+    document.getElementById('targetYear').textContent = target.getFullYear();
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
